@@ -1,3 +1,4 @@
+import 'package:flutter_eccomerce/models/favorit_model.dart';
 import 'package:flutter_eccomerce/models/menu_button_model.dart';
 import 'package:flutter_eccomerce/models/product_model.dart';
 
@@ -125,4 +126,111 @@ const List<MenuButton> dummyMenuButton = [
     name: 'Tokopedia \nSeru',
     
   ),
+];
+
+const List<String> favoritCategories = [
+  'Electronic',
+  'Furniture',
+  'Fashion',
+];
+
+const List<Favorit>dummyFavorit = [
+  // Kategori: Electronic
+Favorit(
+  id: '1',
+  name: "Wireless Headphone",
+  image: "assets/images/headphone.jpg",
+  discount: 20,
+  price: 320000,
+  originalPrice: 400000,
+  rating: 4.8,
+  sold: 1200,
+  category: "Electronic",
+  leaderBoard: '2',
+  requirementFreeDilevery: true,
+  ramadhanSeru: true,
+  localProduct: false,
+),
+
+Favorit(
+  id: '2',
+  name: "Smartwatch",
+  image: "assets/images/smartwatch.jpg",
+  discount: 15,
+  price: 425000,
+  originalPrice: 500000,
+  rating: 4.7,
+  sold: 850,
+  category: "Electronic",
+  leaderBoard: '1',
+ requirementFreeDilevery: false,
+  ramadhanSeru: true,
+  localProduct: false,
+),
+
+// Kategori: Fashion
+Favorit(
+  id: '3',
+  name: "Oversize T-Shirt",
+  image: "assets/images/tshirt.jpg",
+  discount: 25,
+  price: 150000,
+  originalPrice: 200000,
+  rating: 4.9,
+  sold: 2300,
+  category: "Fashion",
+  leaderBoard: '1',
+  requirementFreeDilevery: true,
+  ramadhanSeru: false,
+  localProduct: true,
+),
+
+Favorit(
+  id: '4',
+  name: "Sneakers Casual",
+  image: "assets/images/sneakers.jpg",
+  discount: 10,
+  price: 360000,
+  originalPrice: 400000,
+  rating: 4.6,
+  sold: 670,
+  category: "Fashion",
+  leaderBoard: '2',
+  requirementFreeDilevery: true,
+  ramadhanSeru: true,
+  localProduct: false,
+),
+
+// Kategori: Furniture
+Favorit(
+  id: '5',
+  name: "Minimalist Chair",
+  image: "assets/images/chair.jpg",
+  discount: 20,
+  price: 280000,
+  originalPrice: 350000,
+  rating: 4.7,
+  sold: 420,
+  category: "Furniture",
+  leaderBoard: '1',
+ requirementFreeDilevery: false,
+  ramadhanSeru: false,
+  localProduct: true,
+),
+
+Favorit(
+  id: '6',
+  name: "Wooden Study Table",
+  image: "assets/images/table.jpg",
+  discount: 15,
+  price: 680000,
+  originalPrice: 800000,
+  rating: 4.8,
+  sold: 310,
+  category: "Furniture",
+  leaderBoard: '2',
+ requirementFreeDilevery: true,
+  ramadhanSeru: true,
+  localProduct: true,
+),
 ];

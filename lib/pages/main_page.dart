@@ -1,40 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_eccomerce/pages/favorit_page.dart';
 import 'package:flutter_eccomerce/pages/home_page.dart';
+import 'package:flutter_eccomerce/providers/navigation_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MainPage extends StatefulWidget {
+class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  int _currentIndex = 0;
   
-  final List<Widget> _pages = [
+
+  static final List<Widget> _pages = [
     HomePage(),
-    _PlaceHolderPage(icon: Icons.tv, label: 'feed'),
+    FavoritPage(),
     _PlaceHolderPage(icon: Icons.mail, label: 'mail'),
     _PlaceHolderPage(icon: Icons.dangerous, label: 'forbidden'),
     _PlaceHolderPage(icon: Icons.person, label: 'Account'),
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+      final selectedIndex = ref.watch(selectedNavIndexProvider);
+
+
     return Scaffold(
       body: IndexedStack(
-        index: _currentIndex,
+        index: selectedIndex,
         children:_pages,
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
+        selectedIndex: selectedIndex,
         indicatorColor: Colors.green,
         backgroundColor: Colors.white,
         onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          ref.read(selectedNavIndexProvider.notifier).state = index;
 
         },
 
@@ -45,9 +44,9 @@ class _MainPageState extends State<MainPage> {
             selectedIcon: Icon(Icons.home),
             ),
           NavigationDestination(
-            icon:Icon(Icons.local_offer_outlined, ) ,
-            label: 'Fedd',
-            selectedIcon: Icon(Icons.local_offer),
+            icon:Icon(Icons.star_outline, ) ,
+            label: 'Favorit',
+            selectedIcon: Icon(Icons.star),
             ),
           NavigationDestination(
             icon:Icon(Icons.receipt_long_outlined, ) ,

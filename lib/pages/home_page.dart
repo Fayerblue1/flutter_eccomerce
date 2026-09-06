@@ -3,476 +3,580 @@ import 'package:flutter_eccomerce/components/menu_button.dart';
 import 'package:flutter_eccomerce/components/product_card.dart';
 import 'package:flutter_eccomerce/models/data_dummy.dart';
 import 'package:flutter_eccomerce/models/product_model.dart';
+import 'package:flutter_eccomerce/providers/product_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   String _selectedCategory = 'Semua';
-  // int _selectedBottomIndex = 0;
+  int _currentBannerIndex = 0;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
-  List<Product> get _filteredProduct {
-    if (_selectedCategory == 'Semua') return dummyProduct;
-    return dummyProduct
-        .where((product) => product.category == _selectedCategory)
-        .toList();
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Product> _getFilteredProducts(List<Product> products) {
+    return products.where((product) {
+      final matchesCategory = _selectedCategory == 'Semua' ||
+          product.category == _selectedCategory;
+      final matchesSearch = _searchQuery.isEmpty ||
+          product.name.toLowerCase().contains(_searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final allProducts = ref.watch(productsProvider);
+    final filteredProducts = _getFilteredProducts(allProducts);
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF7F8FA),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              children: [
-                Image.asset(
-                  'assets/images/navbar_bg.png',
-                  width: double.infinity,
-                  height: 160.0,
-                  fit: BoxFit.cover,
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              cursorColor: Colors.grey,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                prefixIcon: Icon(Icons.search, size: 25.0),
-                                prefixIconColor: Colors.black,
-                                hint: Text(
-                                  'Cari di Tokopedia',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade700,
-                                    fontSize: 16.0,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                  vertical: 3.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.mail_outline, size: 25.0),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          Stack(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.notifications_outlined,
+            // Top Header: Background + Search Bar + Location
+            _buildTopHeader(),
 
-                                  size: 25.0,
-                                ),
-                                visualDensity: VisualDensity.compact,
-                              ),
-                              Positioned(
-                                right: 8.0,
-                                top: 5.0,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 5.0,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Text(
-                                    '1',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 11.0,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 25.0,
-                            ),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.menu, size: 25.0),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Colors.green,
-                            size: 15.0,
-                          ),
-                          Text(' Dikirim Ke '),
-                          Text(
-                            'Rumah Deni Alwan (Brebes)',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.keyboard_arrow_down_outlined),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/gopay_icon.png',
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                  SizedBox(width: 4.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Rp 99,999',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                      Text(
-                                        '0 Coins',
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 8.0),
-                          Container(
-                            width: 1.5,
-                            height: 30.0,
-                            color: Colors.grey.shade300,
-                          ),
-                          SizedBox(width: 3.0),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/bintang_icon.png',
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                  SizedBox(width: 4.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Diskon 9,999%',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13.0,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Langganan, Yuk!',
-                                        style: TextStyle(
-                                          color: Colors.green[600],
-                                          fontWeight: FontWeight.bold,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 8.0),
-                          Container(
-                            width: 1.5,
-                            height: 30.0,
-                            color: Colors.grey.shade300,
-                          ),
-                          SizedBox(width: 4.0),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/silver_icon.png',
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                  SizedBox(width: 4.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Silver',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        '16 Kupon Baru',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 12.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/banner.png',
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                    Image.asset(
-                      'assets/images/banner.png',
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                    Image.asset(
-                      'assets/images/banner.png',
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                    Image.asset(
-                      'assets/images/banner.png',
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const SizedBox(height: 12),
 
-            // SizedBox(
-            //   child: SingleChildScrollView(
-            //     scrollDirection: Axis.horizontal,
-            //     padding: const EdgeInsets.all(10.0),
-            //     child: Row(
-            //       spacing: 5.0,
-            //       children: [
-            //         MenuButton(
-            //           image: 'assets/images/ramadhan_logo.png',
-            //           name: 'Promo \nRamadhan',
-            //           onTap: () {},
-            //         ),
-            //         MenuButton(
-            //           image: 'assets/images/api_logo.png',
-            //           name: 'Mumpung \nMurah',
-            //           onTap: () {},
-            //         ),
-            //         MenuButton(
-            //           image: 'assets/images/beli_lokal_logo.png',
-            //           name: 'Beli Lokal',
-            //           onTap: () {},
-            //         ),
-            //         MenuButton(
-            //           image: 'assets/images/bri_visa_logo.png',
-            //           name: 'Tokopedia \ncard',
-            //           onTap: () {},
-            //         ),
-            //         MenuButton(
-            //           image: 'assets/images/coins_logo.png',
-            //           name: 'Keuangan',
-            //           onTap: () {},
-            //         ),
-            //         MenuButton(
-            //           image: 'assets/images/hadiah_logo.png',
-            //           name: 'Tokopedia \nSeru',
-            //           onTap: () {},
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            // Wallet & Rewards Card (GoPay, Plus/Bintang, Silver)
+            _buildWalletCard(),
 
-           SizedBox(
-            height:140,
-             child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: dummyMenuButton.length,
-              separatorBuilder: ((context, index) => SizedBox(width:10.0)),
-              itemBuilder: (context, index) {
-                final category = dummyMenuButton[index];
-                return MenuButton(image: category.image, name: category.name, onTap: (){},);
-              },
-              
-             ),
-           ),
-            SizedBox(height: 10),
-            // Kategory
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-              child: SizedBox(
-                height: 40,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: productCategories.length,
-                  separatorBuilder: ((context, index) => SizedBox(width: 10.0)),
-                  itemBuilder: ((context, index) {
-                    final category = productCategories[index];
-                    final isSelected = _selectedCategory == category;
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedCategory = category;
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        child: Text(
-                          category,
-                          style: GoogleFonts.poppins(
-                            color: isSelected ? Colors.green : Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            ),
+            const SizedBox(height: 14),
 
-            // Product
+            // Promo Banner Carousel
+            _buildPromoBanners(),
+
+            const SizedBox(height: 14),
+
+            // Quick Menu Horizontal Shortcuts
+            _buildQuickMenu(),
+
+            const SizedBox(height: 12),
+
+            // Category Filter Pills
+            _buildCategoryFilter(),
+
+            const SizedBox(height: 10),
+
+            // Product Grid Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.57, // Horizontal 6 | vertical 10,
-                ),
-                itemCount: _filteredProduct.length,
-                itemBuilder: (context, index) {
-                  final product = _filteredProduct[index];
-                  return ProductCard(product: product);
-                },
-              ),
+              child: filteredProducts.isEmpty
+                  ? _buildEmptyState()
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 0.54,
+                      ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = filteredProducts[index];
+                        return ProductCard(
+                          product: product,
+                          onFavoriteTap: () {
+                            ref
+                                .read(productsProvider.notifier)
+                                .toggleFavorite(product.id);
+                          },
+                          onTap: () {},
+                        );
+                      },
+                    ),
             ),
+
+            const SizedBox(height: 24),
           ],
         ),
       ),
+    );
+  }
 
-      // With BottomNavigationBar
+  Widget _buildTopHeader() {
+    return Stack(
+      children: [
+        // Background Header Image with subtle dark overlay
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/navbar_bg.png',
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF03AC0E), Color(0xFF028A0B)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
 
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _selectedBottomIndex,
+        SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14.0, 10.0, 14.0, 12.0),
+            child: Column(
+              children: [
+                // Search Row: TextField + Action Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(20),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value;
+                            });
+                          },
+                          textAlignVertical: TextAlignVertical.center,
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: const Color(0xFF212121),
+                          ),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            hintText: 'Cari di Tokopedia',
+                            hintStyle: GoogleFonts.poppins(
+                              color: Colors.grey.shade500,
+                              fontSize: 13.0,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.search,
+                              size: 20.0,
+                              color: Colors.grey,
+                            ),
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear, size: 16),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      setState(() {
+                                        _searchQuery = '';
+                                      });
+                                    },
+                                  )
+                                : null,
+                            border: InputBorder.none,
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildHeaderIconButton(
+                      icon: Icons.mail_outline,
+                      onTap: () {},
+                    ),
+                    _buildHeaderIconButton(
+                      icon: Icons.notifications_outlined,
+                      badge: '2',
+                      onTap: () {},
+                    ),
+                    _buildHeaderIconButton(
+                      icon: Icons.shopping_cart_outlined,
+                      badge: '1',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
 
-      //   onTap: (index) {
-      //     setState(() {
-      //       _selectedBottomIndex = index;
-      //     });
-      //   },
+                const SizedBox(height: 8.0),
 
-      //   selectedItemColor: Colors.green,
-      //   unselectedItemColor: Colors.grey,
+                // Delivery Address Strip
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      color: Colors.white,
+                      size: 15.0,
+                    ),
+                    const SizedBox(width: 4.0),
+                    Text(
+                      'Dikirim ke ',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11.5,
+                        color: Colors.white.withAlpha(230),
+                      ),
+                    ),
+                    Text(
+                      'Rumah Deni Alwan (Brebes)',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 16.0,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-      //   type: BottomNavigationBarType.fixed,
+  Widget _buildHeaderIconButton({
+    required IconData icon,
+    String? badge,
+    required VoidCallback onTap,
+  }) {
+    return Stack(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Icon(icon, size: 22.0, color: Colors.white),
+            ),
+          ),
+        ),
+        if (badge != null)
+          Positioned(
+            right: 4.0,
+            top: 4.0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE53935),
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                badge,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
 
-      //   items: [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home_outlined),
-      //       activeIcon: Icon(Icons.home),
-      //       label: 'Home',
-      //     ),
+  Widget _buildWalletCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(12),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // GoPay Segment
+              _buildWalletSegment(
+                image: 'assets/images/gopay_icon.png',
+                fallbackIcon: Icons.account_balance_wallet,
+                fallbackColor: const Color(0xFF00AED6),
+                title: 'Rp 99.999',
+                subtitle: '0 Coins',
+                subtitleColor: Colors.grey.shade500,
+              ),
 
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.local_offer_outlined),
-      //       activeIcon: Icon(Icons.local_offer),
-      //       label: 'Feed',
-      //     ),
+              _buildWalletDivider(),
 
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.receipt_long_outlined),
-      //       activeIcon: Icon(Icons.receipt_long),
-      //       label: 'Pesanan',
-      //     ),
+              // Plus / Langganan Segment
+              _buildWalletSegment(
+                image: 'assets/images/bintang_icon.png',
+                fallbackIcon: Icons.stars,
+                fallbackColor: const Color(0xFFFFB800),
+                title: 'Diskon 99%',
+                subtitle: 'Langganan, Yuk!',
+                subtitleColor: const Color(0xFF03AC0E),
+              ),
 
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.chat_bubble_outline),
-      //       activeIcon: Icon(Icons.chat_bubble),
-      //       label: 'Chat',
-      //     ),
+              _buildWalletDivider(),
 
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.person_outline),
-      //       activeIcon: Icon(Icons.person),
-      //       label: 'Akun',
-      //     ),
-      //   ],
-      // ),
+              // Tier / Kupon Segment
+              _buildWalletSegment(
+                image: 'assets/images/silver_icon.png',
+                fallbackIcon: Icons.military_tech,
+                fallbackColor: Colors.grey,
+                title: 'Silver',
+                subtitle: '16 Kupon Baru',
+                subtitleColor: Colors.grey.shade500,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-      // With Navigation
+  Widget _buildWalletSegment({
+    required String image,
+    required IconData fallbackIcon,
+    required Color fallbackColor,
+    required String title,
+    required String subtitle,
+    required Color subtitleColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            image,
+            width: 26,
+            height: 26,
+            errorBuilder: (context, error, stackTrace) =>
+                Icon(fallbackIcon, color: fallbackColor, size: 24),
+          ),
+          const SizedBox(width: 6.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11.5,
+                  color: const Color(0xFF212121),
+                ),
+              ),
+              Text(
+                subtitle,
+                style: GoogleFonts.poppins(
+                  color: subtitleColor,
+                  fontWeight: subtitleColor == const Color(0xFF03AC0E)
+                      ? FontWeight.w600
+                      : FontWeight.normal,
+                  fontSize: 9.5,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-      // bottomNavigationBar: NavigationBar(
-      //   onDestinationSelected: (value) {
-          
-      //   },
+  Widget _buildWalletDivider() {
+    return Container(
+      width: 1,
+      height: 26,
+      color: Colors.grey.shade200,
+    );
+  }
 
-      //   destinations: [
-      //     NavigationDestination(
-      //       icon: Icon(Icons.home_outlined),
-      //       selectedIcon: Icon(Icons.home),
-      //       label: 'Home',
-      //       )
-      //   ]
-      //   ),
+  Widget _buildPromoBanners() {
+    return Column(
+      children: [
+        SizedBox(
+          height: 135,
+          child: PageView.builder(
+            itemCount: 4,
+            onPageChanged: (index) {
+              setState(() {
+                _currentBannerIndex = index;
+              });
+            },
+            controller: PageController(viewportFraction: 0.92),
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Image.asset(
+                    'assets/images/banner.png',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: const Color(0xFF03AC0E),
+                      child: const Center(
+                        child: Text(
+                          'Promo Spesial Tokopedia',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 6),
+        // Active Indicator Dots
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(4, (index) {
+            final isActive = _currentBannerIndex == index;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.symmetric(horizontal: 2.5),
+              width: isActive ? 16 : 6,
+              height: 5,
+              decoration: BoxDecoration(
+                color: isActive
+                    ? const Color(0xFF03AC0E)
+                    : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickMenu() {
+    return SizedBox(
+      height: 90,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 14.0),
+        itemCount: dummyMenuButton.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 6.0),
+        itemBuilder: (context, index) {
+          final item = dummyMenuButton[index];
+          return MenuButton(
+            image: item.image,
+            name: item.name,
+            onTap: () {},
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCategoryFilter() {
+    return SizedBox(
+      height: 36,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 14.0),
+        itemCount: productCategories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8.0),
+        itemBuilder: (context, index) {
+          final category = productCategories[index];
+          final isSelected = _selectedCategory == category;
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedCategory = category;
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.symmetric(horizontal: 14.0),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? const Color(0xFFE8F5E9)
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected
+                      ? const Color(0xFF03AC0E)
+                      : Colors.grey.shade300,
+                  width: isSelected ? 1.2 : 0.8,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                category,
+                style: GoogleFonts.poppins(
+                  color: isSelected
+                      ? const Color(0xFF03AC0E)
+                      : const Color(0xFF616161),
+                  fontSize: 12.5,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      alignment: Alignment.center,
+      child: Column(
+        children: [
+          Icon(Icons.search_off_rounded, size: 54, color: Colors.grey.shade400),
+          const SizedBox(height: 12),
+          Text(
+            'Produk Tidak Ditemukan',
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Coba ubah kata kunci atau pilih kategori lain',
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

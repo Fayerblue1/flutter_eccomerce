@@ -1,229 +1,295 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_eccomerce/models/product_model.dart';
+import 'package:flutter_eccomerce/utils/currency_formatter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onTap;
+  final VoidCallback? onFavoriteTap;
 
-  const ProductCard({super.key, required this.product, this.onTap,});
+  const ProductCard({
+    super.key,
+    required this.product,
+    this.onTap,
+    this.onFavoriteTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 400,
-        width: 200,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
           color: Colors.white,
+          border: Border.all(color: Colors.grey.shade200, width: 0.8),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.09),
-              blurRadius: 6,
+              color: Colors.black.withAlpha(12),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
+        clipBehavior: Clip.antiAlias,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Product Image & Floating Badges
             Stack(
               children: [
                 AspectRatio(
                   aspectRatio: 1,
-                  child: Image.network(
+                  child: Image.asset(
                     product.image,
                     fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      return Container(
-                        color: Colors.white,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.green,
-                          ),
-                        ),
-                      );
-                    },
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: Colors.white,
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey,
-                          size: 40,
+                        color: Colors.grey.shade100,
+                        child: const Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            color: Colors.grey,
+                            size: 36,
+                          ),
                         ),
                       );
                     },
                   ),
                 ),
-                //Badge Diskon
-                if(product.discount > 0)
-                Positioned(
-                  top: 6,
-                  left: 6,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular((10.0)),
+
+                // Discount Badge (Top Left)
+                if (product.discount > 0)
+                  Positioned(
+                    top: 6,
+                    left: 6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE53935),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        '${product.discount}%',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      '${product.discount}%',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                  ),
+
+                // Favorite Toggle Button (Top Right)
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onFavoriteTap,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(210),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(20),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          product.isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: product.isFavorite
+                              ? const Color(0xFFE53935)
+                              : Colors.grey.shade600,
+                          size: 17,
+                        ),
                       ),
                     ),
                   ),
                 ),
 
-                //BAdge Free Ongkir
-                if(product.isFreeShipping)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: (Container(
-                    padding: EdgeInsets.symmetric(vertical: 3),
-                    decoration: BoxDecoration(color: Colors.green),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.local_shipping,
-                          color: Colors.white,
-                          size: 11,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          'Gratis Ongkir',
-                          style: GoogleFonts.poppins(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
+                // Free Shipping Badge (Bottom Bar)
+                if (product.isFreeShipping)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      color: const Color(0xFF03AC0E),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.local_shipping,
+                            color: Colors.white,
+                            size: 11,
                           ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Bebas Ongkir',
+                            style: GoogleFonts.poppins(
+                              fontSize: 9.5,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
+            // Flexible Product Details Section wrapped in Expanded to prevent bottom overflow
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 6.0, 8.0, 6.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Top: Name, Price & Strikethrough
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          product.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            height: 1.25,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF212121),
+                          ),
+                        ),
+                        const SizedBox(height: 4.0),
+                        Text(
+                          CurrencyFormatter.toRupiah(product.price),
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: const Color(0xFF212121),
+                          ),
+                        ),
+                        if (product.originalPrice != null && product.discount > 0)
+                          Text(
+                            CurrencyFormatter.toRupiah(product.originalPrice),
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade500,
+                              fontSize: 10,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                      ],
+                    ),
+
+                    // Bottom: Rating, Sold, Location, and Official badge
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              color: Color(0xFFFFB800),
+                              size: 14,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              product.rating.toString(),
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey.shade700,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '•',
+                              style: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: 9,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                CurrencyFormatter.formatSold(product.sold),
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.grey.shade500,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on_outlined,
+                                  color: Colors.grey.shade500,
+                                  size: 12,
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  product.location,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (product.isOfficial)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 1,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE8F5E9),
+                                  border: Border.all(
+                                    color: const Color(0xFF03AC0E),
+                                    width: 0.8,
+                                  ),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                                child: Text(
+                                  'Official',
+                                  style: GoogleFonts.poppins(
+                                    color: const Color(0xFF03AC0E),
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),
-                  )),
+                  ],
                 ),
-              ],
-            ),
-            //Detail Product
-            Container(
-              padding: EdgeInsets.all(5.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(fontSize: 13, height: 1.3),
-                  ),
-                  
-                  SizedBox(height: 5.0),
-                  Text(
-                    product.price.toString(),
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  
-                  if (product.originalPrice != null)
-                  Text(
-                    product.originalPrice.toString(),
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey,
-                      fontSize: 11,
-                      decoration: TextDecoration.lineThrough,
-                      decorationColor: Colors.grey,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.amber, size: 16),
-
-                      Text(
-                        product.rating.toString(),
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      SizedBox(width: 5.0),
-
-                      Text(
-                        '|',
-                        style: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      SizedBox(width: 5.0),
-
-
-                      Text(
-                        '${product.sold.toString()}Terjual'  ,
-                        style: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-
-                  
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.location_pin, color: Colors.grey, size: 15),
-                      Text(
-                        product.location,
-                        style: GoogleFonts.poppins(
-                          color: Colors.grey,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                        ],
-                      ),
-
-                      if(product.isOfficial)
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade50,
-                          border: Border.all(color: Colors.green, width: 1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'Official',
-                          style: GoogleFonts.poppins(
-                            color: Colors.green,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ),
           ],

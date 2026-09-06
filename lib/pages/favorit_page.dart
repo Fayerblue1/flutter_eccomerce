@@ -211,10 +211,10 @@ class _FavoritPageState extends State<FavoritPage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 1,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 0.57, // Horizontal 6 | vertical 10,
+                  childAspectRatio: 2.5, // Horizontal 6 | vertical 10,
                 ),
                 itemCount: _filteredFavorit.length,
                 itemBuilder: (context, index) {

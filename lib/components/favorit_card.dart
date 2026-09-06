@@ -24,227 +24,246 @@ class FavoritCard extends StatelessWidget {
           ],
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              children: [
-                AspectRatio(
-                  aspectRatio: 1,
-                  child: Image.network(
-                    favorit.image,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      return Container(
-                        color: Colors.white,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.green,
+            SizedBox(
+              width:120,
+              height:double.infinity,
+            
+            
+              
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft:Radius.circular(10),
+                  bottomLeft:Radius.circular(10)
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ClipRRect(
+                        child: Image.network(
+                          favorit.image,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                        
+                            return Center(
+                              child:CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color:Colors.green
+                              ) ,)
+                              ;
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.white,
+                              child: const Icon(
+                                Icons.image_not_supported,
+                                color: Colors.grey,
+                                size: 20,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                
+                    Positioned(
+                      top: 6,
+                      left: 0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.amberAccent,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
                           ),
                         ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.white,
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey,
-                          size: 20,
+                        child: Text(
+                          '#${favorit.leaderBoard}',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                    // Row(
+                    //   children: [
+                    //     Positioned(
+                    //       bottom: 0,
+                    //       left: 0,
+                    //       right: 0,
+                    //       child: Container(
+                    //         width: 200,
+                    //         padding: EdgeInsets.symmetric(vertical: 3),
+                    //         decoration: BoxDecoration(color: Colors.green),
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.center,
+                    //           children: [
+                    //             Text(
+                    //               'Ramadhan \nEkstra Seru',
+                    //               style: GoogleFonts.poppins(
+                    //                 fontSize: 10,
+                    //                 fontWeight: FontWeight.w600,
+                    //                 color: Colors.white,
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                
+                    //     Positioned(
+                    //       bottom: 0,
+                    //       left: 0,
+                    //       right: 0,
+                    //       child: Container(
+                    //         width: 200,
+                    //         padding: EdgeInsets.symmetric(vertical: 3),
+                    //         decoration: BoxDecoration(color: Colors.green.shade600),
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.center,
+                    //           children: [
+                    //             Text(
+                    //               'Belanja \n20rb',
+                    //               style: GoogleFonts.poppins(
+                    //                 fontSize: 10,
+                    //                 fontWeight: FontWeight.w600,
+                    //                 color: Colors.yellowAccent,
+                    //               ),
+                    //             ),
+                    //             Text(
+                    //               'Free \nDilevery',
+                    //               style: GoogleFonts.poppins(
+                    //                 fontSize: 10,
+                    //                 fontWeight: FontWeight.w600,
+                    //                 color: Colors.white,
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                
+                    //     Positioned(
+                    //       bottom: 0,
+                    //       left: 0,
+                    //       right: 0,
+                    //       child: Container(
+                    //         width: 200,
+                    //         padding: EdgeInsets.symmetric(vertical: 3),
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.greenAccent.shade400,
+                    //         ),
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.center,
+                    //           children: [
+                    //             Image.asset(
+                    //               "assets/images/lokalProduct.png",
+                    //               width: 100,
+                    //               height: 100,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                  
+                  ],
                 ),
-
-                // Positioned(
-                //   top: 6,
-                //   left: 5,
-                //   child: Container(
-                //     padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                //     decoration: BoxDecoration(
-                //       color: Colors.amberAccent,
-                //       borderRadius: BorderRadius.only(
-                //         topRight: Radius.circular(10),
-                //         bottomRight: Radius.circular(10),
-                //       ),
-                //     ),
-                //     child: Text(
-                //       '#${favorit.leaderBoard}',
-                //       style: GoogleFonts.poppins(
-                //         color: Colors.white,
-                //         fontSize: 11,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // Row(
-                //   children: [
-                //     Positioned(
-                //       bottom: 0,
-                //       left: 0,
-                //       right: 0,
-                //       child: Container(
-                //         width: 200,
-                //         padding: EdgeInsets.symmetric(vertical: 3),
-                //         decoration: BoxDecoration(color: Colors.green),
-                //         child: Row(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: [
-                //             Text(
-                //               'Ramadhan \nEkstra Seru',
-                //               style: GoogleFonts.poppins(
-                //                 fontSize: 10,
-                //                 fontWeight: FontWeight.w600,
-                //                 color: Colors.white,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-
-                //     Positioned(
-                //       bottom: 0,
-                //       left: 0,
-                //       right: 0,
-                //       child: Container(
-                //         width: 200,
-                //         padding: EdgeInsets.symmetric(vertical: 3),
-                //         decoration: BoxDecoration(color: Colors.green.shade600),
-                //         child: Row(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: [
-                //             Text(
-                //               'Belanja \n20rb',
-                //               style: GoogleFonts.poppins(
-                //                 fontSize: 10,
-                //                 fontWeight: FontWeight.w600,
-                //                 color: Colors.yellowAccent,
-                //               ),
-                //             ),
-                //             Text(
-                //               'Free \nDilevery',
-                //               style: GoogleFonts.poppins(
-                //                 fontSize: 10,
-                //                 fontWeight: FontWeight.w600,
-                //                 color: Colors.white,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-
-                //     Positioned(
-                //       bottom: 0,
-                //       left: 0,
-                //       right: 0,
-                //       child: Container(
-                //         width: 200,
-                //         padding: EdgeInsets.symmetric(vertical: 3),
-                //         decoration: BoxDecoration(
-                //           color: Colors.greenAccent.shade400,
-                //         ),
-                //         child: Row(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: [
-                //             Image.asset(
-                //               "assets/images/lokalProduct.png",
-                //               width: 100,
-                //               height: 100,
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-              
-              ],
+              ),
             ),
 
-            //Detailed Product
-            // Container(
-            //  padding: EdgeInsets.all(5.0),
-            //  child:Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Text(
-            //         favorit.name,
-            //         maxLines: 2,
-            //         overflow: TextOverflow.ellipsis,
-            //         style: GoogleFonts.poppins(fontSize: 13, height: 1.3),
-            //     ),
-
-            //     SizedBox(height: 5,),
-            //     Row(
-            //       children: [
-            //         Text(
-            //         favorit.price.toString(),
-            //         style: GoogleFonts.poppins(
-            //           fontWeight: FontWeight.w600,
-            //           fontSize: 14,
-            //         ),
-            //         ),
-                      
-            //         SizedBox(width: 5,),
-
-            //         Text(
-            //         favorit.originalPrice.toString(),
-            //         style: GoogleFonts.poppins(
-            //           fontWeight: FontWeight.w600,
-            //           color: Colors.grey,
-            //           fontSize: 11,
-            //           decoration: TextDecoration.lineThrough,
-            //           decorationColor: Colors.grey,
-            //         ),
-            //       ),
-
-            //       SizedBox(width: 5,),
-
-            //         Text(
-            //           favorit.discount.toString(),
-            //           style: GoogleFonts.poppins(
-            //             fontWeight: FontWeight.w600,
-            //           color: Colors.red,
-            //           fontSize: 11,
-            //           )
-            //           )
-
-            //       ],
-            //       ),
-            //       Row(
-            //         children: [
-            //           Icon(
-            //             Icons.star,
-            //             color: Colors.amber,
-            //           ),
-
-            //           SizedBox(width:3),
-
-            //           Padding(
-            //           padding: EdgeInsets.symmetric(horizontal:6),
-            //           child: 
-            //           Text('•',
-            //           style:TextStyle(
-            //               color:Colors.grey
-            //           ),
-            //           ),
-            //           ),
-            //           Text(
-            //             '${favorit.sold.toString()}Terjual'  ,
-            //             style: TextStyle(
-            //               color: Colors.grey.shade400,
-            //               fontWeight: FontWeight.bold,
-            //             ),
-            //           ),
-
-            //         ],
-            //         ),
-            //   ],
-            //  )
-            // )
+            Expanded(
+              child: Container(
+               padding: EdgeInsets.all(5.0),
+               child:Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      favorit.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(fontSize: 13, height: 1.3),
+                  ),
+              
+                  SizedBox(height: 5,),
+                  Row(
+                    children: [
+                      Text(
+                      favorit.price.toString(),
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      ),
+                        
+                      SizedBox(width: 5,),
+              
+                      Text(
+                      favorit.originalPrice.toString(),
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey,
+                        fontSize: 11,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: Colors.grey,
+                      ),
+                    ),
+              
+                    SizedBox(width: 5,),
+              
+                      Text(
+                        '${favorit.discount.toString()}%',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                        color: Colors.red,
+                        fontSize: 11,
+                        )
+                        )
+              
+                    ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                           size: 17,
+                        ),
+              
+                        SizedBox(width:3),
+              
+                        Padding(
+                        padding: EdgeInsets.symmetric(horizontal:6),
+                        child: 
+                        Text('•',
+                        style:TextStyle(
+                            color:Colors.grey
+                        ),
+                        ),
+                        ),
+                        Text(
+                          '${favorit.sold.toString()}Terjual'  ,
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+              
+                      ],
+                      ),
+                ],
+               )
+              ),
+            )
           
           ],
         ),
